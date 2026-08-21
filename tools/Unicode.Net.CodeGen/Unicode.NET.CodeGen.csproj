@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.CommandLine" Version="2.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Link core types for independence from generated code -->
+    <Compile Include="..\..\src\Unicode.NET\CodePoint.cs" Link="Shared\CodePoint.cs" />
+    <Compile Include="..\..\src\Unicode.NET\CodePointRange.cs" Link="Shared\CodePointRange.cs" />
+    <Compile Include="..\..\src\Unicode.NET\CodePointSet.cs" Link="Shared\CodePointSet.cs" />
+    <Compile Include="..\..\src\Unicode.NET\CodePointSetBuilder.cs" Link="Shared\CodePointSetBuilder.cs" />
+  </ItemGroup>
+</Project>
