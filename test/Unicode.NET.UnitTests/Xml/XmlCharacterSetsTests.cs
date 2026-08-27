@@ -148,6 +148,20 @@ public class XmlCharacterSetsTests
     }
 
     [Fact]
+    public void PredicateHelpers_DelegateToXmlSets()
+    {
+        var values = new[] { 0x003A, 0x0030, 0x000A, 0x1F600 };
+        foreach (var value in values)
+        {
+            var codePoint = CodePoint.Create(value);
+            Assert.Equal(XmlCharacterSets.Char.Contains(codePoint), XmlCharacterSets.IsChar(codePoint));
+            Assert.Equal(XmlCharacterSets.NameStartChar.Contains(codePoint), XmlCharacterSets.IsNameStartChar(codePoint));
+            Assert.Equal(XmlCharacterSets.NameChar.Contains(codePoint), XmlCharacterSets.IsNameChar(codePoint));
+            Assert.Equal(XmlCharacterSets.Whitespace.Contains(codePoint), XmlCharacterSets.IsWhitespace(codePoint));
+        }
+    }
+
+    [Fact]
     public void Whitespace_IsExactSet()
     {
         var whitespace = XmlCharacterSets.Whitespace;
@@ -163,5 +177,27 @@ public class XmlCharacterSetsTests
         Assert.False(whitespace.Contains(CodePoint.Create(0x000E)));
         Assert.False(whitespace.Contains(CodePoint.Create(0x001F)));
         Assert.False(whitespace.Contains(CodePoint.Create(0x0021)));
+        Assert.Equal(4, whitespace.Count);
+    }
+
+    [Fact]
+    public void XmlSets_AreSharedInstances()
+    {
+        Assert.Same(XmlCharacterSets.Char, XmlCharacterSets.Char);
+        Assert.Same(XmlCharacterSets.NameStartChar, XmlCharacterSets.NameStartChar);
+        Assert.Same(XmlCharacterSets.NameChar, XmlCharacterSets.NameChar);
+        Assert.Same(XmlCharacterSets.Whitespace, XmlCharacterSets.Whitespace);
+    }
+
+    [Fact]
+    public void XmlSets_RejectEverySurrogate()
+    {
+        for (int value = CodePoint.HighSurrogateStart; value <= CodePoint.LowSurrogateEnd; value++)
+        {
+            var codePoint = CodePoint.Create(value);
+            Assert.False(XmlCharacterSets.IsChar(codePoint));
+            Assert.False(XmlCharacterSets.IsNameStartChar(codePoint));
+            Assert.False(XmlCharacterSets.IsNameChar(codePoint));
+        }
     }
 }

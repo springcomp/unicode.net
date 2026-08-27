@@ -8,12 +8,13 @@ namespace Unicode.NET;
 /// <remarks>
 /// <para>
 /// Simple folding (C+S records) and full folding (C+F records, 1:N mappings) are both implemented.
-/// Turkic locale is designed-in but reserved for future implementation.
+/// String folding rejects malformed UTF-16 and allocates its returned string. Turkic locale is
+/// designed-in but reserved for future implementation.
 /// </para>
 /// <para>
 /// Case closure (<see cref="CaseClosure"/>) operates on scalar sets only and does not expand
 /// 1:N full-folding mappings. Callers needing full-fold string expansion must use
-/// <see cref="Fold"/> with <see cref="CaseFoldingMode.Full"/> directly.
+/// the string <see cref="Fold(string, CaseFoldingMode, CaseFoldingLocale, UnicodeVersion?)"/> with <see cref="CaseFoldingMode.Full"/> directly.
 /// </para>
 /// <para>
 /// Case folding is not lowercasing and does not imply normalization.
@@ -39,7 +40,7 @@ public static class CaseFolding
     /// </param>
     /// <returns>
     /// A non-empty read-only list of code points. Simple mode always returns exactly one element.
-    /// Full mode (when implemented) may return one or more elements.
+    /// Full mode may return one or more elements.
     /// </returns>
     /// <exception cref="NotSupportedException">
     /// Thrown when <paramref name="locale"/> is
@@ -48,7 +49,7 @@ public static class CaseFolding
     /// </exception>
     public static IReadOnlyList<CodePoint> Fold(
         CodePoint codePoint,
-        CaseFoldingMode mode = CaseFoldingMode.Simple,
+        CaseFoldingMode mode = CaseFoldingMode.Full,
         CaseFoldingLocale locale = CaseFoldingLocale.Default,
         UnicodeVersion? version = null)
     {
@@ -85,5 +86,71 @@ public static class CaseFolding
             return Array.ConvertAll(mapped, CodePoint.CreateScalar);
         // Fallback: use simple fold
         return FoldSimple(codePoint, data);
+    }
+
+    /// <summary>
+    /// Folds all Unicode scalar values in a UTF-16 string. The result is not normalized.
+    /// </summary>
+    /// <remarks>
+    /// The returned string is newly allocated, including when the input needs no mapping.
+    /// Unpaired UTF-16 surrogates are rejected with <see cref="ArgumentException"/>.
+    /// </remarks>
+    public static string Fold(
+        string value,
+        CaseFoldingMode mode = CaseFoldingMode.Full,
+        CaseFoldingLocale locale = CaseFoldingLocale.Default,
+        UnicodeVersion? version = null)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        var ver = version ?? UnicodeVersion.Current;
+        var tables = UnicodeVersion.GetTablesOrThrow(ver);
+        if (locale == CaseFoldingLocale.Turkic)
+            throw new NotSupportedException(
+                "CaseFoldingLocale.Turkic is reserved for future implementation. " +
+                "Turkic (T) case-folding map generation has not yet been added.");
+
+        if (mode is not (CaseFoldingMode.Simple or CaseFoldingMode.Full))
+            throw new ArgumentOutOfRangeException(nameof(mode), mode, "Unknown CaseFoldingMode.");
+
+        var data = tables.GetCaseFoldingData();
+        var builder = new System.Text.StringBuilder(value.Length);
+        for (int index = 0; index < value.Length;)
+        {
+            char first = value[index];
+            if (Utf16.IsHighSurrogate(first))
+            {
+                if (index + 1 >= value.Length || !Utf16.IsLowSurrogate(value[index + 1]))
+                    throw new ArgumentException("Value contains an unpaired UTF-16 surrogate.", nameof(value));
+            }
+            else if (Utf16.IsLowSurrogate(first))
+            {
+                throw new ArgumentException("Value contains an unpaired UTF-16 surrogate.", nameof(value));
+            }
+
+            Utf16.Decode(value.AsSpan(index), out var codePoint, out int consumed);
+            var folded = mode == CaseFoldingMode.Simple
+                ? FoldSimple(codePoint, data)
+                : FoldFull(codePoint, data);
+            foreach (var item in folded)
+                builder.Append(Utf16.Encode(item));
+            index += consumed;
+        }
+        return builder.ToString();
+    }
+
+    /// <summary>
+    /// Compares two UTF-16 strings after Unicode case folding.
+    /// </summary>
+    /// <remarks>Both folded strings are allocated; this gives the comparison the same semantics as <see cref="Fold(string, CaseFoldingMode, CaseFoldingLocale, UnicodeVersion?)"/>.</remarks>
+    public static bool CaselessEquals(
+        ReadOnlySpan<char> left,
+        ReadOnlySpan<char> right,
+        CaseFoldingMode mode = CaseFoldingMode.Full,
+        CaseFoldingLocale locale = CaseFoldingLocale.Default,
+        UnicodeVersion? version = null)
+    {
+        // Strings are required internally so malformed UTF-16 validation and version policy stay identical.
+        return string.Equals(Fold(left.ToString(), mode, locale, version),
+            Fold(right.ToString(), mode, locale, version), StringComparison.Ordinal);
     }
 }

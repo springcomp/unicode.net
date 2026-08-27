@@ -26,6 +26,22 @@ public static class XPathShortcuts
     /// </summary>
     public static CodePointSet Space() => s_space;
 
+    /// <summary>Tests whether <paramref name="value"/> belongs to the XPath/XSD <c>\d</c> set.</summary>
+    /// <param name="value">Code point to test.</param>
+    /// <param name="version">The Unicode version; defaults to <see cref="UnicodeVersion.Current"/>.</param>
+    public static bool IsDigit(CodePoint value, UnicodeVersion? version = null) =>
+        Digit(version).Contains(value);
+
+    /// <summary>Tests whether <paramref name="value"/> belongs to the XPath/XSD <c>\s</c> set.</summary>
+    /// <param name="value">Code point to test.</param>
+    public static bool IsSpace(CodePoint value) => s_space.Contains(value);
+
+    /// <summary>Tests whether <paramref name="value"/> belongs to the XPath/XSD <c>\w</c> set.</summary>
+    /// <param name="value">Code point to test.</param>
+    /// <param name="version">The Unicode version; defaults to <see cref="UnicodeVersion.Current"/>.</param>
+    public static bool IsWord(CodePoint value, UnicodeVersion? version = null) =>
+        Word(version).Contains(value);
+
     private static CodePointSet BuildAsciiSpace()
     {
         var builder = new CodePointSetBuilder();

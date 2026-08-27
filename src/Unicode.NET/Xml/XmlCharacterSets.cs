@@ -32,6 +32,18 @@ public static class XmlCharacterSets
     /// </summary>
     public static CodePointSet Whitespace { get; } = BuildWhitespace();
 
+    /// <summary>Tests whether <paramref name="value"/> is permitted by XML 1.0 fifth-edition <c>Char</c>.</summary>
+    public static bool IsChar(CodePoint value) => Char.Contains(value);
+
+    /// <summary>Tests whether <paramref name="value"/> is permitted by XML 1.0 fifth-edition <c>NameStartChar</c>.</summary>
+    public static bool IsNameStartChar(CodePoint value) => NameStartChar.Contains(value);
+
+    /// <summary>Tests whether <paramref name="value"/> is permitted by XML 1.0 fifth-edition <c>NameChar</c>.</summary>
+    public static bool IsNameChar(CodePoint value) => NameChar.Contains(value);
+
+    /// <summary>Tests whether <paramref name="value"/> is XML whitespace (the <c>S</c> production).</summary>
+    public static bool IsWhitespace(CodePoint value) => Whitespace.Contains(value);
+
     private static CodePointSet BuildChar()
     {
         var builder = new CodePointSetBuilder();

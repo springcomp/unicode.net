@@ -223,6 +223,61 @@ public class CaseFoldingTests
     }
 
     [Fact]
+    public void StringFold_ExpandsAndComparesCaselessText()
+    {
+        Assert.Equal("ss", CaseFolding.Fold("ß"));
+        Assert.Equal("fi", CaseFolding.Fold("ﬁ"));
+        Assert.True(CaseFolding.CaselessEquals("MASSE", "Maße"));
+        Assert.Equal("σσ", CaseFolding.Fold("Σς"));
+    }
+
+    [Fact]
+    public void StringFold_PreservesCherokeeAndSupplementaryScalars()
+    {
+        Assert.Equal("Ꭰ", CaseFolding.Fold("ꭰ"));
+        Assert.Equal("𐐨", CaseFolding.Fold("𐐀"));
+    }
+
+    [Fact]
+    public void StringFold_SimpleDoesNotExpand()
+    {
+        Assert.Equal("ß", CaseFolding.Fold("ß", CaseFoldingMode.Simple));
+    }
+
+    [Fact]
+    public void StringFold_IsNotNormalization()
+    {
+        const string decomposed = "A\u030A";
+
+        Assert.Equal("a\u030A", CaseFolding.Fold(decomposed));
+        Assert.NotEqual("å", CaseFolding.Fold(decomposed));
+    }
+
+    [Theory]
+    [InlineData(0xD800)]
+    [InlineData(0xDBFF)]
+    [InlineData(0xDC00)]
+    [InlineData(0xDFFF)]
+    public void StringFold_RejectsEveryUnpairedSurrogate(int value)
+    {
+        Assert.Throws<ArgumentException>(() => CaseFolding.Fold(new string((char)value, 1)));
+    }
+
+    [Fact]
+    public void StringFold_EmptyInput_ReturnsEmptyString()
+    {
+        Assert.Equal(string.Empty, CaseFolding.Fold(string.Empty));
+    }
+
+    [Fact]
+    public void StringFold_RejectsNullAndMalformedUtf16()
+    {
+        Assert.Throws<ArgumentNullException>(() => CaseFolding.Fold(null!));
+        Assert.Throws<ArgumentException>(() => CaseFolding.Fold("\uD800"));
+        Assert.Throws<ArgumentException>(() => CaseFolding.CaselessEquals("\uDC00", ""));
+    }
+
+    [Fact]
     public void Fold_TurkicLocale_ThrowsNotSupportedException()
     {
         Assert.Throws<NotSupportedException>(() =>

@@ -54,6 +54,18 @@ public class XPathShortcutsTests
     }
 
     [Fact]
+    public void ScalarHelpers_MatchShortcutSets()
+    {
+        var values = new[] { CodePoint.Create('0'), CodePoint.Create('A'), CodePoint.Create(' '), CodePoint.Create('_'), CodePoint.Create(0x0660) };
+        foreach (var value in values)
+        {
+            Assert.Equal(XPathShortcuts.Digit().Contains(value), XPathShortcuts.IsDigit(value));
+            Assert.Equal(XPathShortcuts.Space().Contains(value), XPathShortcuts.IsSpace(value));
+            Assert.Equal(XPathShortcuts.Word().Contains(value), XPathShortcuts.IsWord(value));
+        }
+    }
+
+    [Fact]
     public void Space_Contains_Expected()
     {
         var s = XPathShortcuts.Space();
@@ -67,6 +79,16 @@ public class XPathShortcutsTests
         Assert.False(s.Contains(CodePoint.Create('\u2028'))); // line separator excluded
         Assert.False(s.Contains(CodePoint.Create('\u200B'))); // ZWSP excluded
         Assert.Equal(4, s.Count);
+        Assert.False(XPathShortcuts.IsSpace(CodePoint.Create('\u00A0')));
+    }
+
+    [Fact]
+    public void Space_IsDistinctFromUnicodeWhiteSpace()
+    {
+        var unicodeWhiteSpace = UnicodeBinaryProperties.GetPropertySet(
+            BinaryProperty.White_Space, UnicodeVersion.Current);
+        Assert.True(unicodeWhiteSpace.Contains(CodePoint.Create('\u00A0')));
+        Assert.False(XPathShortcuts.IsSpace(CodePoint.Create('\u00A0')));
     }
 
     [Fact]
@@ -87,6 +109,18 @@ public class XPathShortcutsTests
         Assert.Equal(
             XPathShortcuts.Digit(UnicodeVersion.Current),
             XPathShortcuts.Digit());
+    }
+
+    [Fact]
+    public void Space_IsVersionIndependent()
+    {
+        Assert.Equal(XPathShortcuts.Space(), XPathShortcuts.Space());
+    }
+
+    [Fact]
+    public void Digit_RejectsUnknownVersion()
+    {
+        Assert.Throws<NotSupportedException>(() => XPathShortcuts.Digit(new UnicodeVersion(1, 0, 0)));
     }
 
     [Fact]

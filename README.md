@@ -16,6 +16,7 @@ Swiss-army knife toolkit for Unicode data and algorithms, built for XSD/XPath-co
 - XPath shortcut escapes: `\d` = `\p{Nd}`, `\w` = `[#x0000-#x10FFFF]-[\p{P}\p{Z}\p{C}]` (both Unicode-based),
 - XPath shortcut escapes: `\s` = `[#x20\t\n\r]` (ASCII-only) — per the XSD/XPath regex spec
 - Unified property resolution with fuzzy suggestions
+- Scalar XPath/XSD shortcut predicates (`IsDigit`, `IsSpace`, `IsWord`); `\s` is XML whitespace, distinct from Unicode `White_Space`
 
 ## Installation
 
@@ -48,6 +49,19 @@ var nameStartChar = XmlCharacterSets.NameStartChar;
 Console.WriteLine(nameStartChar.Contains(CodePoint.Create('_')));  // true
 Console.WriteLine(nameStartChar.Contains(CodePoint.Create('0')));  // false
 ```
+
+### XPath/XSD shortcut predicates
+
+```csharp
+using Unicode.NET;
+
+bool digit = XPathShortcuts.IsDigit(CodePoint.Create('４'));
+bool xmlSpace = XPathShortcuts.IsSpace(CodePoint.Create('\u0020'));
+bool word = XPathShortcuts.IsWord(CodePoint.Create('A'));
+// XPathShortcuts.IsSpace(U+00A0) is false; Unicode White_Space includes U+00A0.
+```
+
+Use `UnicodeBinaryProperties.GetPropertySet(BinaryProperty.White_Space, UnicodeVersion.Current)` when Unicode UCD whitespace is required.
 
 ### Case folding and closure
 
