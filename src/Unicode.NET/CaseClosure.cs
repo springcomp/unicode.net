@@ -50,7 +50,7 @@ public static class CaseClosure
         ArgumentNullException.ThrowIfNull(input);
 
         var ver = version ?? UnicodeVersion.Current;
-        UnicodeVersion.GetTablesOrThrow(ver);
+        var tables = UnicodeVersion.GetTablesOrThrow(ver);
 
         if (locale == CaseFoldingLocale.Turkic)
             throw new NotSupportedException(
@@ -64,7 +64,7 @@ public static class CaseClosure
         if (input.IsEmpty)
             return CodePointSet.Empty;
 
-        var simpleMap = CaseFolding.GetSimpleMap(ver);
+        var simpleMap = tables.GetCaseFoldingData().SimpleMap;
         var reverseMap = BuildReverseMap(simpleMap);
 
         // BFS: for each member, add its fold and all reverse-fold preimages

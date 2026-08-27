@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+
 namespace Unicode.NET;
 
 /// <summary>
@@ -6,19 +8,23 @@ namespace Unicode.NET;
 /// </summary>
 public static class XPathShortcuts
 {
-    private static readonly UnicodeVersion Version = UnicodeVersion.V15_1_0;
+    private static readonly ConcurrentDictionary<UnicodeVersion, CodePointSet> s_digitCache = new();
+    private static readonly ConcurrentDictionary<UnicodeVersion, CodePointSet> s_wordCache = new();
+    private static readonly CodePointSet s_space = BuildAsciiSpace();
 
     /// <summary>
     /// \d — \p{Nd} (Unicode Decimal_Number category).
     /// </summary>
-    public static CodePointSet Digit { get; } =
-        UnicodeData.GetCategorySet("Nd", Version);
+    /// <param name="version">The Unicode version; defaults to <see cref="UnicodeVersion.Current"/>.</param>
+    public static CodePointSet Digit(UnicodeVersion? version = null) =>
+        s_digitCache.GetOrAdd(version ?? UnicodeVersion.Current,
+            static v => UnicodeData.GetCategorySet("Nd", v));
 
     /// <summary>
     /// \s — [#x20\t\n\r]. Per the XSD/XPath spec this is ASCII-only
     /// (space, tab, LF, CR); it is NOT the Unicode White_Space property.
     /// </summary>
-    public static CodePointSet Space { get; } = BuildAsciiSpace();
+    public static CodePointSet Space() => s_space;
 
     private static CodePointSet BuildAsciiSpace()
     {
@@ -33,9 +39,11 @@ public static class XPathShortcuts
     /// \w — [#x0000-#x10FFFF]-[\p{P}\p{Z}\p{C}]: every character except
     /// Punctuation, Separator, and Other categories (e.g. excludes '_', which is Pc).
     /// </summary>
-    public static CodePointSet Word { get; } =
-        CodePointSet.All.Subtract(
-            UnicodeData.GetCategorySet("P", Version)
-                .Union(UnicodeData.GetCategorySet("Z", Version))
-                .Union(UnicodeData.GetCategorySet("C", Version)));
+    /// <param name="version">The Unicode version; defaults to <see cref="UnicodeVersion.Current"/>.</param>
+    public static CodePointSet Word(UnicodeVersion? version = null) =>
+        s_wordCache.GetOrAdd(version ?? UnicodeVersion.Current, static v =>
+            CodePointSet.All.Subtract(
+                UnicodeData.GetCategorySet("P", v)
+                    .Union(UnicodeData.GetCategorySet("Z", v))
+                    .Union(UnicodeData.GetCategorySet("C", v))));
 }

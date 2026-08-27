@@ -7,6 +7,7 @@ namespace Unicode.NET.Generated;
 internal interface IVersionTables
 {
     CaseMappingData GetCaseMappingData();
+    CaseFoldingData GetCaseFoldingData();
     /// <summary>Returns the <see cref="Unicode.NET.CodePointSet"/> for a given general category.</summary>
     Unicode.NET.CodePointSet GetCategorySet(Unicode.NET.GeneralCategory category);
 
@@ -62,6 +63,20 @@ internal sealed class CaseMappingData
     internal IReadOnlyList<CaseMappingContextRule> ContextualRules { get; }
     internal IReadOnlyList<CodePointRange> Cased { get; }
     internal IReadOnlyList<CodePointRange> CaseIgnorable { get; }
+}
+
+internal sealed class CaseFoldingData
+{
+    public CaseFoldingData(
+        FrozenDictionary<int, int> simpleMap,
+        FrozenDictionary<int, int[]> fullMap)
+    {
+        SimpleMap = simpleMap;
+        FullMap = fullMap;
+    }
+
+    internal FrozenDictionary<int, int> SimpleMap { get; }
+    internal FrozenDictionary<int, int[]> FullMap { get; }
 }
 
 internal sealed record CaseMappingContextRule(

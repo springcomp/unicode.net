@@ -140,6 +140,27 @@ public class CaseFoldingTests
             CaseFolding.Fold(CodePoint.Create(0x41), version: unknownVersion));
     }
 
+    [Fact]
+    public void Fold_RegisteredVersions_ReturnUsableSimpleAndFullData()
+    {
+        foreach (var version in new[] { UnicodeVersion.V15_1_0, UnicodeVersion.V16_0_0 })
+        {
+            var simple = CaseFolding.Fold(
+                CodePoint.Create(0x0041),
+                CaseFoldingMode.Simple,
+                version: version);
+            var full = CaseFolding.Fold(
+                CodePoint.Create(0x0041),
+                CaseFoldingMode.Full,
+                version: version);
+
+            Assert.NotEmpty(simple);
+            Assert.NotEmpty(full);
+            Assert.Equal(0x0061, simple[0].Value);
+            Assert.Equal(0x0061, full[0].Value);
+        }
+    }
+
     // ── Full mode ───────────────────────────────────────────────────────────
 
     [Fact]

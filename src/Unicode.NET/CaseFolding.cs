@@ -1,4 +1,3 @@
-using System.Collections.Frozen;
 using Unicode.NET.Generated;
 
 namespace Unicode.NET;
@@ -54,7 +53,7 @@ public static class CaseFolding
         UnicodeVersion? version = null)
     {
         var ver = version ?? UnicodeVersion.Current;
-        UnicodeVersion.GetTablesOrThrow(ver);
+        var tables = UnicodeVersion.GetTablesOrThrow(ver);
 
         if (locale == CaseFoldingLocale.Turkic)
             throw new NotSupportedException(
@@ -63,56 +62,28 @@ public static class CaseFolding
 
         return mode switch
         {
-            CaseFoldingMode.Simple => FoldSimple(codePoint, ver),
-            CaseFoldingMode.Full => FoldFull(codePoint, ver),
+            CaseFoldingMode.Simple => FoldSimple(codePoint, tables.GetCaseFoldingData()),
+            CaseFoldingMode.Full => FoldFull(codePoint, tables.GetCaseFoldingData()),
             _ => throw new ArgumentOutOfRangeException(nameof(mode), mode, "Unknown CaseFoldingMode.")
         };
     }
 
-    private static IReadOnlyList<CodePoint> FoldSimple(CodePoint codePoint, UnicodeVersion version)
+    private static IReadOnlyList<CodePoint> FoldSimple(CodePoint codePoint, CaseFoldingData data)
     {
-        var map = GetSimpleMap(version);
+        var map = data.SimpleMap;
         int value = codePoint.Value;
         if (map.TryGetValue(value, out int mapped))
             return [CodePoint.CreateScalar(mapped)];
         return [codePoint];
     }
 
-    private static IReadOnlyList<CodePoint> FoldFull(CodePoint codePoint, UnicodeVersion version)
+    private static IReadOnlyList<CodePoint> FoldFull(CodePoint codePoint, CaseFoldingData data)
     {
-        var fullMap = GetFullMap(version);
+        var fullMap = data.FullMap;
         int value = codePoint.Value;
         if (fullMap.TryGetValue(value, out int[]? mapped))
             return Array.ConvertAll(mapped, CodePoint.CreateScalar);
         // Fallback: use simple fold
-        return FoldSimple(codePoint, version);
-    }
-
-    /// <summary>
-    /// Returns the simple case-folding map for the given Unicode version.
-    /// </summary>
-    internal static FrozenDictionary<int, int> GetSimpleMap(UnicodeVersion version)
-    {
-        if (version == UnicodeVersion.V15_1_0)
-            return CaseFolding_15_1_0.SimpleMap;
-        if (version == UnicodeVersion.V16_0_0)
-            return CaseFolding_16_0_0.SimpleMap;
-        throw new NotSupportedException(
-            $"Simple case-folding data is not available for Unicode {version}. " +
-            $"Registered versions: 15.1.0, 16.0.0.");
-    }
-
-    /// <summary>
-    /// Returns the full case-folding map for the given Unicode version.
-    /// </summary>
-    internal static FrozenDictionary<int, int[]> GetFullMap(UnicodeVersion version)
-    {
-        if (version == UnicodeVersion.V15_1_0)
-            return CaseFolding_15_1_0.FullMap;
-        if (version == UnicodeVersion.V16_0_0)
-            return CaseFolding_16_0_0.FullMap;
-        throw new NotSupportedException(
-            $"Full case-folding data is not available for Unicode {version}. " +
-            $"Registered versions: 15.1.0, 16.0.0.");
+        return FoldSimple(codePoint, data);
     }
 }

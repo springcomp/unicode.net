@@ -9,7 +9,12 @@ internal sealed class VersionTables_15_1_0 : IVersionTables
 
     private VersionTables_15_1_0() { }
 
+    private static readonly CaseFoldingData CaseFolding =
+        new(CaseFolding_15_1_0.SimpleMap, CaseFolding_15_1_0.FullMap);
+
     public CaseMappingData GetCaseMappingData() => CaseMapping_15_1_0.Data;
+
+    public CaseFoldingData GetCaseFoldingData() => CaseFolding;
 
     public CodePointSet GetCategorySet(GeneralCategory category) => category switch
     {
