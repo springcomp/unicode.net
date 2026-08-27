@@ -9,6 +9,8 @@ internal sealed class VersionTables_15_1_0 : IVersionTables
 
     private VersionTables_15_1_0() { }
 
+    public CaseMappingData GetCaseMappingData() => CaseMapping_15_1_0.Data;
+
     public CodePointSet GetCategorySet(GeneralCategory category) => category switch
     {
         GeneralCategory.Lu => GeneralCategories_15_1_0.Lu,

@@ -11,6 +11,7 @@ public static class DownloadCommand
   private static readonly string[] UcdFiles =
   [
       "UnicodeData.txt",
+        "SpecialCasing.txt",
         "Blocks.txt",
         "CaseFolding.txt",
         "PropertyValueAliases.txt",

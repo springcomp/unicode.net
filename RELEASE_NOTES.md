@@ -1,3 +1,10 @@
+# Unicode.NET 1.1.0
+
+- Added full Unicode default whole-string lower- and upper-case mapping.
+- Added contextual Greek final-sigma handling and one-to-many mappings.
+- Added Unicode 15.1.0 and 16.0.0 case-mapping provenance and documentation.
+- NuGet and symbol packages now include XML API documentation.
+
 # Unicode.NET 1.0.0
 
 Initial release of Unicode.NET — Unicode data and algorithms library for .NET.

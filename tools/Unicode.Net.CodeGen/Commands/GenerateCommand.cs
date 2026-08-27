@@ -30,6 +30,9 @@ public static class GenerateCommand
 
     Console.WriteLine($"  [parse]  UnicodeData.txt");
     var unicodeData = UnicodeDataParser.Parse(Path.Combine(cacheDir, "UnicodeData.txt"));
+    Console.WriteLine($"  [parse]  SpecialCasing.txt");
+    var specialCasing = SpecialCasingParser.Parse(Path.Combine(cacheDir, "SpecialCasing.txt"));
+    var caseMappings = CaseMappingParser.Parse(Path.Combine(cacheDir, "UnicodeData.txt"));
 
     Console.WriteLine($"  [parse]  Blocks.txt");
     var blocks = BlocksParser.Parse(Path.Combine(cacheDir, "Blocks.txt"));
@@ -52,10 +55,14 @@ public static class GenerateCommand
     var propListRecords = BinaryPropertiesParser.Parse(Path.Combine(cacheDir, "PropList.txt"));
 
     Console.WriteLine($"  [parse]  DerivedCoreProperties.txt");
-    var derivedCoreRecords = BinaryPropertiesParser.Parse(Path.Combine(cacheDir, "DerivedCoreProperties.txt"));
+    var derivedCorePath = Path.Combine(cacheDir, "DerivedCoreProperties.txt");
+    var derivedCoreRecords = BinaryPropertiesParser.Parse(derivedCorePath);
+    var caseContextRecords = BinaryPropertiesParser.Parse(
+      derivedCorePath,
+      new HashSet<string>(StringComparer.Ordinal) { "Cased", "Case_Ignorable" });
 
     // Merge: PropList + DerivedCoreProperties (Alphabetic comes from DerivedCoreProperties)
-    var allBinaryRecords = propListRecords.Concat(derivedCoreRecords).ToList();
+    var allBinaryRecords = propListRecords.Concat(derivedCoreRecords).Concat(caseContextRecords).ToList();
 
     WriteIfChanged(
         Path.Combine(outputDir, $"PropertyAliases.{version}.g.cs"),
@@ -72,6 +79,10 @@ public static class GenerateCommand
     WriteIfChanged(
         Path.Combine(outputDir, $"CaseFolding.{version}.g.cs"),
         CaseFoldingTableGenerator.Generate(caseFolding, version));
+
+    WriteIfChanged(
+        Path.Combine(outputDir, $"CaseMapping.{version}.g.cs"),
+        CaseMappingTableGenerator.Generate(caseMappings, specialCasing, allBinaryRecords, version));
 
     WriteIfChanged(
         Path.Combine(outputDir, $"Scripts.{version}.g.cs"),

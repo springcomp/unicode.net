@@ -10,10 +10,10 @@ namespace Unicode.NET.Generated;
 
 internal static class UnicodeBlocks_16_0_0
 {
-  /// <summary>All Unicode blocks defined in Unicode 16.0.0.</summary>
-  internal static readonly IReadOnlyList<(CodePointRange Range, string Name)> All =
-  [
-      (CodePointRange.Create(0x0, 0x7F), "Basic Latin"),
+    /// <summary>All Unicode blocks defined in Unicode 16.0.0.</summary>
+    internal static readonly IReadOnlyList<(CodePointRange Range, string Name)> All =
+    [
+        (CodePointRange.Create(0x0, 0x7F), "Basic Latin"),
         (CodePointRange.Create(0x80, 0xFF), "Latin-1 Supplement"),
         (CodePointRange.Create(0x100, 0x17F), "Latin Extended-A"),
         (CodePointRange.Create(0x180, 0x24F), "Latin Extended-B"),
@@ -351,5 +351,5 @@ internal static class UnicodeBlocks_16_0_0
         (CodePointRange.Create(0xE0100, 0xE01EF), "Variation Selectors Supplement"),
         (CodePointRange.Create(0xF0000, 0xFFFFF), "Supplementary Private Use Area-A"),
         (CodePointRange.Create(0x100000, 0x10FFFF), "Supplementary Private Use Area-B")
-  ];
+    ];
 }

@@ -123,6 +123,9 @@ public enum Script
     /// <summary>Ethiopic script.</summary>
     Ethiopic,
 
+    /// <summary>Garay script.</summary>
+    Garay,
+
     /// <summary>Georgian script.</summary>
     Georgian,
 
@@ -146,6 +149,9 @@ public enum Script
 
     /// <summary>Gurmukhi script.</summary>
     Gurmukhi,
+
+    /// <summary>Gurung Khema script.</summary>
+    Gurung_Khema,
 
     /// <summary>Han script.</summary>
     Han,
@@ -212,6 +218,9 @@ public enum Script
 
     /// <summary>Khudawadi script.</summary>
     Khudawadi,
+
+    /// <summary>Kirat Rai script.</summary>
+    Kirat_Rai,
 
     /// <summary>Lao script.</summary>
     Lao,
@@ -324,6 +333,9 @@ public enum Script
     /// <summary>Ol Chiki script.</summary>
     Ol_Chiki,
 
+    /// <summary>Ol Onal script.</summary>
+    Ol_Onal,
+
     /// <summary>Old Hungarian script.</summary>
     Old_Hungarian,
 
@@ -417,6 +429,9 @@ public enum Script
     /// <summary>Sundanese script.</summary>
     Sundanese,
 
+    /// <summary>Sunuwar script.</summary>
+    Sunuwar,
+
     /// <summary>Syloti Nagri script.</summary>
     Syloti_Nagri,
 
@@ -468,8 +483,14 @@ public enum Script
     /// <summary>Tirhuta script.</summary>
     Tirhuta,
 
+    /// <summary>Todhri script.</summary>
+    Todhri,
+
     /// <summary>Toto script.</summary>
     Toto,
+
+    /// <summary>Tulu Tigalari script.</summary>
+    Tulu_Tigalari,
 
     /// <summary>Ugaritic script.</summary>
     Ugaritic,

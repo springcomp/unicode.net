@@ -18,7 +18,7 @@ namespace Unicode.NET;
 /// </para>
 /// <para>
 /// Case folding is not lowercasing and does not imply normalization.
-/// Do not use <see cref="char.ToLower"/> or culture-aware APIs as a substitute.
+/// Do not use <see cref="char.ToLower(char)"/> or culture-aware APIs as a substitute.
 /// </para>
 /// </remarks>
 public static class CaseFolding

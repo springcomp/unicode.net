@@ -10,13 +10,13 @@ namespace Unicode.NET.Generated;
 
 internal static class PropertyAliases_15_1_0
 {
-  /// <summary>
-  /// Maps normalized general category alias (lowercase, no underscores/hyphens)
-  /// to canonical long name (e.g., "Uppercase_Letter").
-  /// </summary>
-  internal static readonly IReadOnlyDictionary<string, string> GeneralCategoryAliases =
-      new Dictionary<string, string>(StringComparer.Ordinal)
-      {
+    /// <summary>
+    /// Maps normalized general category alias (lowercase, no underscores/hyphens)
+    /// to canonical long name (e.g., "Uppercase_Letter").
+    /// </summary>
+    internal static readonly IReadOnlyDictionary<string, string> GeneralCategoryAliases =
+        new Dictionary<string, string>(StringComparer.Ordinal)
+        {
             { "c", "Other" },
             { "casedletter", "Cased_Letter" },
             { "cc", "Control" },
@@ -97,15 +97,15 @@ internal static class PropertyAliases_15_1_0
             { "zl", "Line_Separator" },
             { "zp", "Paragraph_Separator" },
             { "zs", "Space_Separator" },
-      };
+        };
 
-  /// <summary>
-  /// Maps normalized script alias (lowercase, no underscores/hyphens)
-  /// to canonical script name (e.g., "Latin", "Greek").
-  /// </summary>
-  internal static readonly IReadOnlyDictionary<string, string> ScriptAliases =
-      new Dictionary<string, string>(StringComparer.Ordinal)
-      {
+    /// <summary>
+    /// Maps normalized script alias (lowercase, no underscores/hyphens)
+    /// to canonical script name (e.g., "Latin", "Greek").
+    /// </summary>
+    internal static readonly IReadOnlyDictionary<string, string> ScriptAliases =
+        new Dictionary<string, string>(StringComparer.Ordinal)
+        {
             { "adlam", "Adlam" },
             { "adlm", "Adlam" },
             { "aghb", "Caucasian_Albanian" },
@@ -430,5 +430,5 @@ internal static class PropertyAliases_15_1_0
             { "zinh", "Inherited" },
             { "zyyy", "Common" },
             { "zzzz", "Unknown" },
-      };
+        };
 }

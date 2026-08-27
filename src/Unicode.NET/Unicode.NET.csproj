@@ -5,10 +5,10 @@
     <Nullable>enable</Nullable>
     <!-- Package metadata -->
     <PackageId>Unicode.NET</PackageId>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <Authors>Springcomp</Authors>
-    <Description>Unicode data and algorithms library for .NET. Provides code point sets, general categories, blocks, scripts, binary properties, case folding, XML character sets, and property resolution. Designed for XSD/XPath regex engines and Unicode-aware text processing.</Description>
-    <PackageTags>unicode;ucd;character-database;case-folding;xml;xpath;xsd;regex</PackageTags>
+    <Description>Unicode data and algorithms library for .NET with full Unicode default case mapping, case folding, code point sets, properties, scripts, XML character sets, and XPath/XSD support.</Description>
+    <PackageTags>unicode;ucd;character-database;case-mapping;case-folding;xml;xpath;xsd;regex</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/springcomp/uni</PackageProjectUrl>
     <RepositoryUrl>https://github.com/springcomp/uni</RepositoryUrl>
@@ -20,6 +20,8 @@
     <!-- Deterministic build -->
     <Deterministic>true</Deterministic>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <None Include="../../README.md" Pack="true" PackagePath="\" />
