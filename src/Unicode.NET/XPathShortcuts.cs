@@ -15,10 +15,19 @@ public static class XPathShortcuts
         UnicodeData.GetCategorySet("Nd", Version);
 
     /// <summary>
-    /// \s — Unicode White_Space binary property (includes NBSP, U+0085, etc., not just ASCII).
+    /// \s — [#x20\t\n\r]. Per the XSD/XPath spec this is ASCII-only
+    /// (space, tab, LF, CR); it is NOT the Unicode White_Space property.
     /// </summary>
-    public static CodePointSet Space { get; } =
-        UnicodeBinaryProperties.GetPropertySet(BinaryProperty.White_Space, Version);
+    public static CodePointSet Space { get; } = BuildAsciiSpace();
+
+    private static CodePointSet BuildAsciiSpace()
+    {
+        var builder = new CodePointSetBuilder();
+        builder.Add(CodePointRange.Create(0x09, 0x0A)); // \t, \n
+        builder.Add(CodePointRange.Create(0x0D, 0x0D)); // \r
+        builder.Add(CodePointRange.Create(0x20, 0x20)); // space
+        return builder.Build();
+    }
 
     /// <summary>
     /// \w — [#x0000-#x10FFFF]-[\p{P}\p{Z}\p{C}]: every character except

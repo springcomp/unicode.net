@@ -12,7 +12,8 @@ Swiss-army knife toolkit for Unicode data and algorithms, built for XSD/XPath-co
 - Case folding: simple (1:1) and full (1:N)
 - Case closure: symmetric BFS over simple-fold equivalents
 - XML 1.0 character sets: `Char`, `NameStartChar`, `NameChar`, `Whitespace`
-- XPath shortcut escapes: `\d`, `\s`, `\w` (ASCII-only, per XPath/XSD spec)
+- XPath shortcut escapes: `\d` = `\p{Nd}`, `\w` = `[#x0000-#x10FFFF]-[\p{P}\p{Z}\p{C}]` (both Unicode-based),
+- XPath shortcut escapes: `\s` = `[#x20\t\n\r]` (ASCII-only) — per the XSD/XPath regex spec
 - Unified property resolution with fuzzy suggestions
 
 ## Installation

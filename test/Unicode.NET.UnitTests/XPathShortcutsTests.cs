@@ -23,9 +23,12 @@ public class XPathShortcutsTests
         Assert.True(s.Contains(CodePoint.Create('\t')));
         Assert.True(s.Contains(CodePoint.Create('\r')));
         Assert.True(s.Contains(CodePoint.Create('\n')));
-        Assert.True(s.Contains(CodePoint.Create('\u00A0'))); // NBSP is White_Space
-        Assert.False(s.Contains(CodePoint.Create('\u200B'))); // ZWSP is not White_Space
-        Assert.Equal(UnicodeBinaryProperties.GetPropertySet(BinaryProperty.White_Space, UnicodeVersion.V15_1_0), s);
+        // Per XSD/XPath spec \s == [#x20\t\n\r]: ASCII-only, NOT Unicode White_Space.
+        Assert.False(s.Contains(CodePoint.Create('\u00A0'))); // NBSP excluded
+        Assert.False(s.Contains(CodePoint.Create('\u0085'))); // NEL excluded
+        Assert.False(s.Contains(CodePoint.Create('\u2028'))); // line separator excluded
+        Assert.False(s.Contains(CodePoint.Create('\u200B'))); // ZWSP excluded
+        Assert.Equal(4, s.Count);
     }
 
     [Fact]
